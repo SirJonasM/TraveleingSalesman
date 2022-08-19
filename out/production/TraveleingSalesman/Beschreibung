@@ -1,0 +1,15 @@
+TSP: Main-Programm
+Die Fitness wird mit dem Pytaghoras berechnet. Dies ist nicht immer die richtige Berechnung für die TSPs.
+
+Visualization: Visualisiert das TSP,
+dabei kann man den booleschen Parameter randomized wählen:
+    - true: die Punkte werden zufällig gewählt und der Algorithmus wird auf diesen angewendet.
+      die Anzahl der Punkte entspricht dem zweiten Parameter.
+    - false: Eine Datei in der Form der beigefügten Dateien wird eingelesen und der Algorithmus auf sie angewendet.
+       diese Dateien enden mit ".tsp"
+       Außerdem gibt es manchmal dazu die Optimalen Routen diese enden mit".opt"
+Man sollte um alle Punkte sehen zu können die Attribute FAKTORFUERX und FAKTORFUERY anpassen.
+    - berlin52:  2  ,  2
+    - usa48   :  8  ,  8
+    - pr1002  : 19  , 19
+    - ch130   :
