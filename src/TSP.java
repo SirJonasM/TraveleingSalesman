@@ -21,7 +21,7 @@ public class TSP {
     public static final double ZOOM = 1.1;
 
     public static Visualization vis;
-    public static final String TOURPATH = "C:\\Dokumente\\Programmieren\\Java\\2 Semester\\TraveleingSalesman\\Datensätze\\";
+    public static final String TOURPATH = "Datensätze/";
     public static  final File TOURFILE = new File(TOURPATH + TOURNAME+ ".tsp");
 
     public static  final File OPTIMUMTOURFILE = new File(TOURPATH + TOURNAME +".opt");
@@ -139,8 +139,8 @@ public class TSP {
 
     public static void setDistances(Punkt [] data){
         for (Punkt punkt : data) {
-            for (int i = 0; i < data.length; i++) {
-                punkt.distances.put(data[i].id, getAbstand(punkt, data[i]));
+            for (Punkt datum : data) {
+                punkt.distances.put(datum.id, getAbstand(punkt, datum));
             }
         }
     }
