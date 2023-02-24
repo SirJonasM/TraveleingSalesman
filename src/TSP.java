@@ -5,9 +5,9 @@ import java.util.*;
 
 public class TSP {
     public static final int ANZAHL_SAVINGS = 8;
-    public static final int CHILD_NUMBER = 4;
+    public static final int CHILD_NUMBER = 6;
     public static final int MAXBERECHNUNGEN = 100_000_000;
-    private static final boolean VOROPTIMIERUNG = true;
+    private static final boolean VOROPTIMIERUNG = false;
     private static final int STARTPOP = 100;
     public static final String TOURNAME = "ch130";
 
@@ -225,7 +225,7 @@ public class TSP {
         return permutationsChosen;
     }
 
-    public static Permutation[] mutate(Permutation[] permutations) {
+    public static  Permutation[] mutate(Permutation[] permutations) {
         permutations = crossover(permutations);
         Permutation[] mutatedPermutations = new Permutation[permutations.length * CHILD_NUMBER];
 
@@ -242,50 +242,33 @@ public class TSP {
         Punkt [] neu = new Punkt[permutation.mutation.length];
         System.arraycopy(permutation.mutation,0,neu,0,neu.length);
 
-        int rand = random.nextInt(10);
+        int rand = random.nextInt(4);
         //rand = 4;
         switch (rand) {
-            case 0 -> centerInverse(neu);
-            case 1 -> reverseSequence(neu);
-            default -> tworsMutation(neu);
+            case 0 -> tworsMutation(neu);
+            default -> reverseSequence(neu);
+
         }
         return new Permutation(neu);
     }
 
     private static void reverseSequence(Punkt [] neu) {
         int a = random.nextInt(neu.length);
-        int b = random.nextInt(neu.length - a) + a;
-
-        Punkt [] reverseSequence = new Punkt[b-a];
-        System.arraycopy(neu,a,reverseSequence,0,b-a);
-        for(int i = 0; i<reverseSequence.length;i++){
-            Punkt storage = reverseSequence[i];
-            reverseSequence[i] = reverseSequence[reverseSequence.length-1-i];
-            reverseSequence[reverseSequence.length-1-i] = storage;
+        int b = random.nextInt(neu.length-a)+a;
+        int mid = a + (b-a)/2;
+        Punkt storage;
+        for (int i = a; i<mid;i++) {
+            storage = neu[i];
+            neu[i] = neu [b-i];
+            neu[b-i]=storage;
         }
-        System.arraycopy(reverseSequence,0,neu,a,b-a);
 
-    }
-
-    private static void centerInverse(Punkt[] neu) {
-        int rand = random.nextInt(neu.length/4,neu.length*3/4);
-
-        for(int i = 0; i<rand/2;i++){
-            Punkt storage = neu[i];
-            neu[i] = neu[rand-i];
-            neu[rand-i] = storage;
-        }
-        for(int i = 0; i<(neu.length-rand)/2;i++){
-            Punkt storage = neu[i+rand];
-            neu[i+rand] = neu[neu.length-i-1];
-            neu[neu.length-i-1] = storage;
-        }
     }
 
     private static void tworsMutation(Punkt [] neu){
         int change1 = random.nextInt(neu.length);
         int change2 = (change1 + random.nextInt(0,TAUSCHRADIUS)+1)%neu.length;
-       Punkt storage = neu[change1];
+        Punkt storage = neu[change1];
         neu[change1] = neu[change2];
         neu[change2] = storage;
     }
