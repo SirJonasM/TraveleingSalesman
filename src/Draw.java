@@ -10,7 +10,6 @@ public class Draw extends JLabel {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setColor(new Color(100,100,100));
         for (int i = 0; i < TSP.best.mutation.length; i++) {
-            String iS = String.valueOf(TSP.best.mutation[i].id);
             int x1 = (int) (TSP.best.mutation[i].x/TSP.ZOOM) ;
             int y1 = (int) (TSP.best.mutation[i].y /TSP.ZOOM)+10;
 
@@ -18,24 +17,7 @@ public class Draw extends JLabel {
             int y2 = (int) (TSP.best.mutation[(i + 1) % TSP.best.mutation.length].y/TSP.ZOOM)+10;
             g2d.fillOval(x1-3,y1-3,6,6);
             g2d.drawLine(x1, y1, x2, y2);
-            //g.drawString(iS,x1,y1);
 
         }
-        String fittnes = "Fittnes: " + TSP.best.fitness;
-        Double currentBest = TSP.anzahlBerchnungenBeiBeste/100_000/10.0;
-        Double count = Permutation.count/100_000/10.0;
-        Double diff = (Permutation.count -TSP.anzahlBerchnungenBeiBeste)/100_000/10.0;
-        String berechnungen = "Berechnungen: " + currentBest + " Mio." + " (" + count + " Mio." + ") Diff: "  +diff + " Mio.";
-
-
-        g.drawRect(5,700,450,40);
-        g.drawRect(5,750,230,40);
-
-
-        g.setColor(Color.white);
-        g.setFont(new Font("Arial",Font.PLAIN,20));
-        g.drawString(fittnes,15,775);
-        g.drawString(berechnungen,15,725);
-        repaint();
     }
 }

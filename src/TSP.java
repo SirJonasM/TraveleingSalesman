@@ -3,23 +3,20 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 
-public class TSP {
+public class TSP  {
     public static final int ANZAHL_SAVINGS = 8;
     public static final int CHILD_NUMBER = 6;
-    public static final int MAXBERECHNUNGEN = 100_000_000;
     private static final boolean VOROPTIMIERUNG = false;
     private static final int STARTPOP = 100;
-    public static final String TOURNAME = "ch130";
-
-    private static int TAUSCHRADIUS;
+    public static final String TOURNAME = "usa48";
 
     public static Random random = new Random();
     public static Permutation best;
 
+    public static Permutation[] permutations;
     public static int anzahlBerchnungenBeiBeste = 0;
 
-    public static final double ZOOM = 1.1;
-
+    public static final double ZOOM = 8.0;
     public static Visualization vis;
     public static final String TOURPATH = "Datensätze/";
     public static  final File TOURFILE = new File(TOURPATH + TOURNAME+ ".tsp");
@@ -27,75 +24,31 @@ public class TSP {
     public static  final File OPTIMUMTOURFILE = new File(TOURPATH + TOURNAME +".opt");
 
     public static void main(String[] args) throws Exception {
-        Punkt[] data = readFile();
-        setDistances(data);
-        TAUSCHRADIUS = data.length/5+1;
-        Permutation[] permutations = fillStartPermutations(data);
-        best = permutations[0];
-        permutations = chooseMutations(permutations);
-        best = permutations[0];
-        int count = 0;
-        int z = 50_000;
-        System.out.println("--------------START-------------");
-        while (Permutation.count < MAXBERECHNUNGEN) {
-            if(count>z){
-                System.out.println("Berechnungen: " + Permutation.count + " | Generation:" +count);
-                System.out.println("Best: " + best);
-                z+=50_000;
-            }
-
-            permutations = mutate(permutations);
-            permutations = chooseMutations(permutations);
-
-
-            if(permutations[0].compareTo(best)<0) {
-                Punkt [] neu = new Punkt[permutations[0].mutation.length];
-                System.arraycopy(permutations[0].mutation,0,neu,0,neu.length);
-                best = new Permutation(neu);
-                System.out.println(best);
-                anzahlBerchnungenBeiBeste = Permutation.count;
-            }
-            count++;
-        }
-        System.out.println("---------------------------------------------------------------------------------------------------");
-        Arrays.stream(permutations).forEach(System.out::println);
-        System.out.println("Beste Lösung: " + best);
-        System.out.println("Generationen: " + count);
-        System.out.println("Berechnungen: " + Permutation.count);
-    }
-
-    public static void main(boolean randomized,int punktAnzahl) throws Exception {
-
         Punkt[] data;
-        if(!randomized){
-            data = readFile();
-        }
-        else{
-            data  = randomizedData(punktAnzahl);
-        }
+        data = readFile();
         setDistances(data);
-        TAUSCHRADIUS = data.length/5+1;
 
-        Permutation[] permutations = fillStartPermutations(data);
-        best = permutations[0];
-        permutations = chooseMutations(permutations);
-        best = permutations[0];
-
+        permutations = fillStartPermutations(data);
+        chooseMutations();
+        best = permutations[0].getCopy();
+        Thread visualization = new Thread(() -> vis = new Visualization());
+        visualization.start();
+        while (vis == null){
+            Thread.sleep(10);
+        }
         System.out.println("--------------START-------------");
-        vis = new Visualization();
-        while (true){
-            permutations = mutate(permutations);
-            permutations = chooseMutations(permutations);
+        while (vis != null){
+            mutate();
+            chooseMutations();
 
             if(permutations[0].compareTo(best)<0) {
-                Punkt [] neu = new Punkt[permutations[0].mutation.length];
-                System.arraycopy(permutations[0].mutation,0,neu,0,neu.length);
-                best = new Permutation(neu);
+                System.out.println(best);
+                best = permutations[0].getCopy();
                 anzahlBerchnungenBeiBeste = Permutation.count;
+                vis.draw.updateUI();
             }
         }
     }
-
 
     private static Punkt[] randomizedData(int punktAnzahl) {
         Punkt [] data = new Punkt[punktAnzahl];
@@ -140,7 +93,7 @@ public class TSP {
     public static void setDistances(Punkt [] data){
         for (Punkt punkt : data) {
             for (Punkt datum : data) {
-                punkt.distances.put(datum.id, getAbstand(punkt, datum));
+                punkt.distances.put(datum.id, HilfsFormeln.getAbstand(punkt, datum));
             }
         }
     }
@@ -159,7 +112,7 @@ public class TSP {
                 mut1.remove(r);
 
                 for (int i = 0; i < mutation.length - 1; i++) {
-                    int id = minAbstand(mut2.get(i), mut1);
+                    int id = HilfsFormeln.minAbstand(mut2.get(i), mut1);
                     mut2.add(mut1.get(id));
                     mut1.remove(id);
                 }
@@ -174,17 +127,17 @@ public class TSP {
         return neu;
     }
 
-    public static Permutation[] crossover(Permutation[] permutationen){
+    public static void crossover(){
         Permutation [] neu = new Permutation[ANZAHL_SAVINGS*2];
-        System.arraycopy(permutationen,0,neu,0,ANZAHL_SAVINGS);
+        System.arraycopy(permutations,0,neu,0,ANZAHL_SAVINGS);
         for(int i = 0; i<neu.length-ANZAHL_SAVINGS;i+=2){
 
-            Punkt [] parent1 = new Punkt[permutationen[0].mutation.length];
-            Punkt [] parent2 = new Punkt[permutationen[0].mutation.length];
+            Punkt [] parent1 = new Punkt[permutations[0].mutation.length];
+            Punkt [] parent2 = new Punkt[permutations[0].mutation.length];
             int rand1 = random.nextInt(ANZAHL_SAVINGS);
             int rand2 = random.nextInt(ANZAHL_SAVINGS);
-            System.arraycopy(permutationen[rand1].mutation,0,parent1,0,parent1.length);
-            System.arraycopy(permutationen[rand2].mutation,0,parent2,0,parent1.length);
+            System.arraycopy(permutations[rand1].mutation,0,parent1,0,parent1.length);
+            System.arraycopy(permutations[rand2].mutation,0,parent2,0,parent1.length);
 
             Punkt[] child1 = new Punkt[parent1.length];
             Punkt[] child2 = new Punkt[parent1.length];
@@ -212,89 +165,33 @@ public class TSP {
             neu[i+ANZAHL_SAVINGS] = new Permutation(child1);
             neu[i+1+ANZAHL_SAVINGS] = new Permutation(child2);
         }
-        return neu;
+        TSP.permutations = neu;
     }
-    public static Permutation[] chooseMutations(Permutation[] permutations) {
+    public static void chooseMutations() {
         Arrays.sort(permutations);
         Permutation[] permutationsChosen = new Permutation[ANZAHL_SAVINGS];
-        for(int i = 0; i<ANZAHL_SAVINGS-1;i++){
+        for(int i = 0; i<ANZAHL_SAVINGS;i++){
             double rand = random.nextDouble();
             permutationsChosen[i] = (rand<0.9) ? permutations[i] : permutations[permutations.length-1-i];
         }
-        permutationsChosen[ANZAHL_SAVINGS-1] = best;
-        return permutationsChosen;
+        permutations = permutationsChosen;
     }
 
-    public static  Permutation[] mutate(Permutation[] permutations) {
-        permutations = crossover(permutations);
-        Permutation[] mutatedPermutations = new Permutation[permutations.length * CHILD_NUMBER];
-
+    public static void mutate() {
+        crossover();
         int count = 0;
+        Permutation[] neu = new Permutation[permutations.length*CHILD_NUMBER];
         for (Permutation permutation : permutations) {
             for (int i = 0; i < CHILD_NUMBER; i++) {
-                mutatedPermutations[count] = makeChanges(permutation);
+                Permutation p = permutation.getCopy();
+                p.makeChanges();
+                neu[count] = p;
                 count++;
             }
         }
-        return mutatedPermutations;
-    }
-    public static Permutation makeChanges(Permutation permutation) {
-        Punkt [] neu = new Punkt[permutation.mutation.length];
-        System.arraycopy(permutation.mutation,0,neu,0,neu.length);
-
-        int rand = random.nextInt(4);
-        //rand = 4;
-        switch (rand) {
-            case 0 -> tworsMutation(neu);
-            default -> reverseSequence(neu);
-
-        }
-        return new Permutation(neu);
-    }
-
-    private static void reverseSequence(Punkt [] neu) {
-        int a = random.nextInt(neu.length);
-        int b = random.nextInt(neu.length-a)+a;
-        int mid = a + (b-a)/2;
-        Punkt storage;
-        for (int i = a; i<mid;i++) {
-            storage = neu[i];
-            neu[i] = neu [b-i];
-            neu[b-i]=storage;
-        }
+        permutations = neu;
 
     }
 
-    private static void tworsMutation(Punkt [] neu){
-        int change1 = random.nextInt(neu.length);
-        int change2 = (change1 + random.nextInt(0,TAUSCHRADIUS)+1)%neu.length;
-        Punkt storage = neu[change1];
-        neu[change1] = neu[change2];
-        neu[change2] = storage;
-    }
-
-    public static double getAbstand(Punkt punkt1, Punkt punkt2) {
-//        double rij = Math.sqrt(((punkt1.x - punkt2.x) * (punkt1.x - punkt2.x) + (punkt1.y - punkt2.y) * (punkt1.y - punkt2.y))/10.0);
-//        int tij = nint(rij);
-//        return (tij<rij) ? tij+1 : tij;
-        return Math.sqrt((punkt1.x - punkt2.x) * (punkt1.x - punkt2.x) + (punkt1.y - punkt2.y) * (punkt1.y - punkt2.y));
-    }
-    public static int nint(double rij){
-        if(rij>0) return (int)(rij + 0.5);
-        return (int)(rij-0.5);
-
-    }
-    public static int minAbstand(Punkt punkt, ArrayList<Punkt> liste) {
-        double minDis = getAbstand(punkt, liste.get(0));
-        int minId = 0;
-        for (int i = 0; i < liste.size(); i++) {
-            double dis = getAbstand(punkt, liste.get(i));
-            if (dis < minDis) {
-                minId = i;
-                minDis = dis;
-            }
-        }
-        return (minId);
-    }
 
 }
