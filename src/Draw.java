@@ -9,12 +9,12 @@ public class Draw extends JLabel {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setColor(new Color(100,100,100));
-        for (int i = 0; i < TSP.best.mutation.length; i++) {
-            int x1 = (int) (TSP.best.mutation[i].x/TSP.ZOOM) ;
-            int y1 = (int) (TSP.best.mutation[i].y /TSP.ZOOM)+10;
+        for (int i = 0; i < TSPImpl.best.mutation.length; i++) {
+            int x1 = (int) (TSPImpl.best.mutation[i].x/Main.ZOOM) ;
+            int y1 = (int) (TSPImpl.best.mutation[i].y /Main.ZOOM)+10;
 
-            int x2 = (int) (TSP.best.mutation[(i + 1) % TSP.best.mutation.length].x/TSP.ZOOM) ;
-            int y2 = (int) (TSP.best.mutation[(i + 1) % TSP.best.mutation.length].y/TSP.ZOOM)+10;
+            int x2 = (int) (TSPImpl.best.mutation[(i + 1) % TSPImpl.best.mutation.length].x/Main.ZOOM) ;
+            int y2 = (int) (TSPImpl.best.mutation[(i + 1) % TSPImpl.best.mutation.length].y/Main.ZOOM)+10;
             g2d.fillOval(x1-3,y1-3,6,6);
             g2d.drawLine(x1, y1, x2, y2);
 

@@ -1,5 +1,5 @@
 NAME : ch130
-TYPE : TSP
+TYPE : TSPImpl
 COMMENT : 130 city problem (Churritz)
 DIMENSION : 130
 EDGE_WEIGHT_TYPE : EUC_2D

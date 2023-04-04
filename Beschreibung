@@ -1,6 +1,6 @@
 #Beschreibung für ein Genetischen Algorithmus für das Traveling Salesman Problem
 
-TSP: Main-Programm
+TSPImpl: Main-Programm
 Es gibt mehrere Attribute zum manuellen anpassen.
 boolescher Wert VOROPTIMIERUNG:
     true: Es wird ein Voroptimierung im groben wie folgt erstellt.
@@ -18,18 +18,18 @@ Integer MAXBERECHNUNGEN: Anzahl der Berechnungen, welche durchgeführt werden bi
 
 STRING TOURNAME: Name der Tour die eingelesen werden soll.
 Man kann weitere Touren in den Ordner "Datensätze" hinzufügen, wobei die Test Klasse nur funktioniert wenn es eine optimal Tour gibt.
-Website mit weiteren Touren mit zugehörigen optimal Touren: "http://elib.zib.de/pub/mp-testdata/tsp/tsplib/tsp/index.html"
+Website mit weiteren Touren mit zugehörigen optimal Touren: "http://elib.zib.de/pub/mp-testdata/tspImpl/tsplib/tspImpl/index.html"
 
 Die Fitness wird mit dem Pythagoras berechnet.
 
-Visualization: Visualisiert das TSP,
+Visualization: Visualisiert das TSPImpl,
 dabei kann man den booleschen Parameter randomized wählen:
     - true: die Punkte werden zufällig gewählt und der Algorithmus wird auf diesen angewendet.
       die Anzahl der Punkte entspricht dem zweiten Parameter.
     - false: Eine Datei in der Form der beigefügten Dateien wird eingelesen und der Algorithmus auf sie angewendet.
-       diese Dateien enden mit ".tsp"
+       diese Dateien enden mit ".tspImpl"
        Außerdem gibt es manchmal dazu die Optimalen Routen diese enden mit".opt"
-Man sollte um alle Punkte sehen zu können das Attribut ZOOM von TSP anpassen.
+Man sollte um alle Punkte sehen zu können das Attribut ZOOM von TSPImpl anpassen.
     - berlin52:  2
     - usa48   :  8
     - pr1002  : 19
