@@ -2,52 +2,67 @@ import java.util.*;
 
 
 public class TSPImpl implements TSP{
+    int nextPoint;
     public final int ANZAHL_SAVINGS;
     private final int CHILD_NUMBER;
     private final boolean VOROPTIMIERUNG;
     private final int STARTPOP;
-
+    public final Punkt[] data;
+    public int gen = 0;
+    public int currentCounter;
     public Random random = new Random();
     public static Permutation best;
-
+    public static Permutation best2;
+    public static Permutation best3;
     public Permutation[] permutations;
-    public int anzahlBerchnungenBeiBeste = 0;
+    public int counterTillNextPoint = 50_000;
 
-
-    public TSPImpl(int STARTPOP, int ANZAHL_SAVINGS, int CHILD_NUMBER, boolean VOROPTIMIERUNG){
+    public TSPImpl(Punkt[] data, int startingPoints, int STARTPOP, int ANZAHL_SAVINGS, int CHILD_NUMBER, boolean VOROPTIMIERUNG){
+        this.data = data;
         this.STARTPOP = STARTPOP;
         this.ANZAHL_SAVINGS =ANZAHL_SAVINGS;
         this.CHILD_NUMBER = CHILD_NUMBER;
         this.VOROPTIMIERUNG = VOROPTIMIERUNG;
+        nextPoint = startingPoints;
+        if(nextPoint == -1) nextPoint = data.length;
+        if(nextPoint == -2) nextPoint = data.length/10;
+        currentCounter = counterTillNextPoint;
     }
-    public void start(Punkt[] punkte){
-        permutations = fillStartPermutations(punkte);
+    public void start(){
+        Punkt[] startData = new Punkt[nextPoint];
+        System.arraycopy(data,0,startData,0,nextPoint);
+        permutations = fillStartPermutations(startData);
         chooseMutations();
         best = permutations[0].getCopy();
+        best2 = permutations[1].getCopy();
+        best3 = permutations[2].getCopy();
     }
-
     public boolean evolution() {
         mutate();
         chooseMutations();
+        gen++;
+        currentCounter--;
+        if(getCurrentPoints() != getMaxPoints() && getCurrentCounter() < 0){
+            currentCounter = counterTillNextPoint;
+            addPoint();
+        }
 
         if(permutations[0].compareTo(best)<0) {
-            System.out.println(best);
+            best3 = best2.getCopy();
+            best2 = best.getCopy();
             best = permutations[0].getCopy();
-            anzahlBerchnungenBeiBeste = Permutation.count;
+            return true;
+        } else if (permutations[1].compareTo(best2)<0) {
+            best3 = best2.getCopy();
+            best2 = permutations[1].getCopy();
+            return true;
+        } else if (permutations[2].compareTo(best3)<0) {
+            best3 = permutations[1].getCopy();
             return true;
         }
         return false;
     }
-    private Punkt[] randomizedData(int punktAnzahl) {
-        Punkt [] data = new Punkt[punktAnzahl];
-        for(int i = 0; i<punktAnzahl;i++){
-            int x = random.nextInt(980);
-            int y = random.nextInt(700);
-            Punkt p = new Punkt(i,x,y);
-            data[i] = p;
-        }
-        return data;
-    }
+
 
      public  Permutation[] fillStartPermutations(Punkt[] mutation) {
         Permutation[] neu = new Permutation[STARTPOP];
@@ -77,45 +92,18 @@ public class TSPImpl implements TSP{
 
     private void crossover(){
         Permutation [] neu = new Permutation[ANZAHL_SAVINGS*2];
-        System.arraycopy(permutations,0,neu,0,ANZAHL_SAVINGS);
-        for(int i = 0; i<neu.length-ANZAHL_SAVINGS;i+=2){
 
-            Punkt [] parent1 = new Punkt[permutations[0].mutation.length];
-            Punkt [] parent2 = new Punkt[permutations[0].mutation.length];
-            int rand1 = random.nextInt(ANZAHL_SAVINGS);
-            int rand2 = random.nextInt(ANZAHL_SAVINGS);
-            System.arraycopy(permutations[rand1].mutation,0,parent1,0,parent1.length);
-            System.arraycopy(permutations[rand2].mutation,0,parent2,0,parent1.length);
+        for(int i = 0;i < neu.length; i++){
+            int parent1 = random.nextInt(permutations.length);
+            int parent2 = random.nextInt(permutations.length);
+            while(parent1 == parent2)
+                parent2 = random.nextInt(permutations.length);
+            neu[i] = permutations[parent1].crossOver(permutations[parent2]);
 
-            Punkt[] child1 = new Punkt[parent1.length];
-            Punkt[] child2 = new Punkt[parent1.length];
-
-            System.arraycopy(parent1,0,child1,0,child1.length);
-            System.arraycopy(parent2,0,child2,0,child1.length);
-
-            int index1 = random.nextInt(child1.length/2);
-            int index2 = index1+random.nextInt(child2.length/2);
-            for(int index = index1;index<index2;index++){
-                for(int index4 = 0; index4< parent2.length;index4++) {
-                    if(child1[index4].id == parent2[index].id){
-                        Punkt storage = child1[index];
-                        child1[index] = parent2[index];
-                        child1[index4] = storage;
-                    }
-                    if(child2[index4].id == parent1[index].id){
-                        Punkt storage = child2[index];
-                        child2[index] = parent1[index];
-                        child2[index4] = storage;
-                    }
-                }
-
-            }
-            neu[i+ANZAHL_SAVINGS] = new Permutation(child1);
-            neu[i+1+ANZAHL_SAVINGS] = new Permutation(child2);
         }
         permutations = neu;
     }
-    private void chooseMutations() {
+    void chooseMutations() {
         Arrays.sort(permutations);
         Permutation[] permutationsChosen = new Permutation[ANZAHL_SAVINGS];
         for(int i = 0; i<ANZAHL_SAVINGS;i++){
@@ -132,13 +120,45 @@ public class TSPImpl implements TSP{
         for (Permutation permutation : permutations) {
             for (int i = 0; i < CHILD_NUMBER; i++) {
                 Permutation p = permutation.getCopy();
-                p.makeChanges();
+                p.makeChanges(1);
                 neu[count] = p;
                 count++;
             }
         }
         permutations = neu;
     }
+    @Override
+    public int getCurrentPoints() {
+        return nextPoint;
+    }
 
+    @Override
+    public int getMaxPoints() {
+        return data.length;
+    }
+
+    @Override
+    public int getCurrentCounter() {
+        return currentCounter;
+    }
+
+    @Override
+    public int getGeneration() {
+        return gen;
+    }
+
+    @Override
+    public void addPoint() {
+
+        data[nextPoint].justAdded = true;
+        if(data[nextPoint-1].justAdded)data[nextPoint-1].justAdded = false;
+        for(Permutation permutation : permutations){
+            permutation.addPoint(data[nextPoint]);
+        }
+        best = permutations[0].getCopy();
+        best2 = permutations[1].getCopy();
+        best3 = permutations[2].getCopy();
+        nextPoint++;
+    }
 
 }

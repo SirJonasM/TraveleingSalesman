@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
@@ -8,25 +9,31 @@ public class Main {
 
     public static final String TOURPATH = "Datensätze/";
     public static final File TOURFILE = new File(TOURPATH + TOURNAME+ ".tsp");
-    public static final double ZOOM = 8.0;
+    public static final double ZOOM = 1.0;
+    public static  Punkt[] data;
+    private static final Random random = new Random();
+    static TSP tsp;
+
 
     public static void main(String[] args) throws Exception {
 
-        Punkt[] data;
         data = readFile();
+        data = randomizedData(5000);
+
+        
         setDistances(data);
 
-        TSP tspImpl = new TSPImpl(100,8,6,false);
-
+        tsp = new TSPImpl(data, TSP.BEGINWITHATENTH, 10,8,6,false);
+        tsp.start();
         Thread visualization = new Thread(() -> vis = new Visualization());
         visualization.start();
-        tspImpl.start(data);
-        while (vis == null){
-            Thread.sleep(10);
-        }
+        visualization.join();
         System.out.println("--------------START-------------");
         while (vis != null){
-            if(tspImpl.evolution()) vis.draw.updateUI();
+            if(tsp.evolution()){
+                vis.drawGraph.updateUI();
+            }
+            vis.drawInfo.updateUI();
         }
     }
     public static void setDistances(Punkt [] data){
@@ -64,5 +71,15 @@ public class Main {
             }
         }
         return punkte;
+    }
+    private static Punkt[] randomizedData(int punktAnzahl) {
+        Punkt [] data = new Punkt[punktAnzahl];
+        for(int i = 0; i<punktAnzahl;i++){
+            int x = random.nextInt(980);
+            int y = random.nextInt(700);
+            Punkt p = new Punkt(i,x,y);
+            data[i] = p;
+        }
+        return data;
     }
 }

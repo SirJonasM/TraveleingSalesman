@@ -3,7 +3,8 @@ import java.awt.*;
 
 public class Visualization extends JFrame{
     JFrame frame;
-    JLabel draw;
+    JLabel drawGraph;
+    JLabel drawInfo;
     public Visualization(){
         frame = new JFrame("TSP");
         frame.setSize(1000,850);
@@ -12,12 +13,19 @@ public class Visualization extends JFrame{
         frame.setLocationRelativeTo(null);
         frame.setLayout(null);
         frame.requestFocus();
-        draw = new Draw();
-        draw.setBounds(0,0,1000,850);
-        draw.setVisible(true);
-        draw.setOpaque(true);
-        draw.setBackground(Color.BLACK);
-        frame.add(draw);
+        drawGraph = new DrawGraph();
+        drawGraph.setBounds(0,0,1000,650);
+        drawGraph.setVisible(true);
+        drawGraph.setOpaque(true);
+        drawGraph.setBackground(Color.BLACK);
+        frame.add(drawGraph);
+        drawInfo = new DrawInfo();
+        drawInfo.setBounds(0,650,1000,100);
+
+        drawInfo.setVisible(true);
+        drawInfo.setOpaque(true);
+        drawInfo.setBackground(Color.BLACK);
+        frame.add(drawInfo);
         frame.setVisible(true);
     }
 }

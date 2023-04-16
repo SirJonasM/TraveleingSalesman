@@ -24,36 +24,22 @@ public class Permutation implements Comparable<Permutation> {
         return fitness;
     }
 
-    public void addPoint(Punkt [] allPoints){
-        if(allPoints.length == mutation.length) return;
-        Random r = new Random();
-        int[] indices = new int[allPoints.length-mutation.length];
-        int counter = 0;
-        for(int i = 0;i<allPoints.length;i++){
-            boolean isInIt = false;
-            for (Punkt p : mutation){
-                if(allPoints[i].equals(p)){
-                    isInIt = true;
-                }
-            }
-            if(!isInIt){
-                indices[counter] = i;
-                counter++;
-            }
-        }
+    public void addPoint(Punkt  point){
         Punkt[] newMutation = new Punkt[mutation.length+1];
         System.arraycopy(mutation,0,newMutation,0,mutation.length);
-        newMutation[newMutation.length-1] = allPoints[indices[r.nextInt(indices.length)]];
+        newMutation[mutation.length] = point;
         mutation = newMutation;
         berechneFitness();
     }
-    public void makeChanges() {
-        int rand = random.nextInt(4);
-        if (rand == 0) {
-            tworsMutation();
-        } else {
-            reverseSequence();
-        }
+    public void makeChanges(int mutationsFaktor) {
+        for(int i = 0; i<mutationsFaktor;i++){
+            int rand = random.nextInt(4);
+            if (rand == 0) {
+                tworsMutation();
+            } else {
+                reverseSequence();
+            }
+            }
         berechneFitness();
     }
 
@@ -75,6 +61,25 @@ public class Permutation implements Comparable<Permutation> {
         Punkt storage = mutation[change1];
         mutation[change1] = mutation[change2];
         mutation[change2] = storage;
+    }
+
+    public Permutation crossOver(Permutation permutation2){
+        Punkt [] newPermutation = new Punkt[mutation.length];
+        int mid = random.nextInt(mutation.length);
+        System.arraycopy(mutation,0,newPermutation,0,mid);
+        for(int i = 0;i < mutation.length;i++){
+            boolean contains = false;
+            for(int j = 0;j<mid;j++){
+                if(newPermutation[j].equals(permutation2.mutation[i])){
+                    contains = true;
+                    break;
+                }
+            }
+            if(contains) continue;
+            newPermutation[mid] = permutation2.mutation[i];
+            mid++;
+        }
+        return new Permutation(newPermutation);
     }
 
     public Permutation getCopy(){

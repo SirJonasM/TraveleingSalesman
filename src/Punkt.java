@@ -2,6 +2,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class Punkt {
+    boolean justAdded = false;
     final int id;
     final double x;
     final double y;
@@ -13,9 +14,6 @@ public class Punkt {
         this.y = y;
         distances = new TreeMap<>();
     }
-
-
-
     @Override
     public String toString() {
         return id + "";
