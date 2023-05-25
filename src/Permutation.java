@@ -3,14 +3,14 @@ import java.util.*;
 public class Permutation implements Comparable<Permutation> {
     public static int count = 0;
     private static final Random random = new Random();
-    Punkt[] mutation;
+    Point[] mutation;
     double fitness;
 
-    public Permutation(Punkt[] mutation) {
+    public Permutation(Point[] mutation) {
         this.mutation = mutation;
         this.fitness = Math.round(berechneFitness() * 100.0) / 100.0;
     }
-    public Permutation(Punkt[] mutation,double fitness) {
+    public Permutation(Point[] mutation, double fitness) {
         this.mutation = mutation;
         this.fitness = fitness;
     }
@@ -24,8 +24,8 @@ public class Permutation implements Comparable<Permutation> {
         return fitness;
     }
 
-    public void addPoint(Punkt  point){
-        Punkt[] newMutation = new Punkt[mutation.length+1];
+    public void addPoint(Point point){
+        Point[] newMutation = new Point[mutation.length+1];
         System.arraycopy(mutation,0,newMutation,0,mutation.length);
         newMutation[mutation.length] = point;
         mutation = newMutation;
@@ -47,7 +47,7 @@ public class Permutation implements Comparable<Permutation> {
         int a = random.nextInt(mutation.length);
         int b = random.nextInt(mutation.length - a) + a;
         int mid = a + (b - a) / 2;
-        Punkt storage;
+        Point storage;
         for (int i = a; i < mid; i++) {
             storage = mutation[i];
             mutation[i] = mutation[b - i];
@@ -58,13 +58,13 @@ public class Permutation implements Comparable<Permutation> {
     private void tworsMutation() {
         int change1 = random.nextInt(mutation.length);
         int change2 = (change1 + random.nextInt(0, mutation.length/5+3) + 1) % mutation.length;
-        Punkt storage = mutation[change1];
+        Point storage = mutation[change1];
         mutation[change1] = mutation[change2];
         mutation[change2] = storage;
     }
 
     public Permutation crossOver(Permutation permutation2){
-        Punkt [] newPermutation = new Punkt[mutation.length];
+        Point[] newPermutation = new Point[mutation.length];
         int mid = random.nextInt(mutation.length);
         System.arraycopy(mutation,0,newPermutation,0,mid);
         for(int i = 0;i < mutation.length;i++){
@@ -83,7 +83,7 @@ public class Permutation implements Comparable<Permutation> {
     }
 
     public Permutation getCopy(){
-        Punkt[] neu = new Punkt[mutation.length];
+        Point[] neu = new Point[mutation.length];
         System.arraycopy(mutation,0,neu,0,mutation.length);
         return new Permutation(neu,fitness);
     }

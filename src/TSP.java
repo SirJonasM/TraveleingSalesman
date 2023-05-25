@@ -1,7 +1,7 @@
 public interface TSP {
-    int BEGINWITHALLPOINT = -1;
+    int BEGINWITHALLPOINTS = -1;
     int BEGINWITHATENTH = -2;
-    boolean evolution();
+    boolean evolute();
     void start();
     int getCurrentPoints();
     int getMaxPoints();
@@ -9,4 +9,5 @@ public interface TSP {
     int getCurrentCounter();
     int getGeneration();
     void addPoint();
+
 }

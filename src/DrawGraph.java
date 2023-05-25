@@ -26,7 +26,7 @@ public class DrawGraph extends JLabel {
         g2d.fillOval(x1-3,y1-3,6,6);
 
     }
-    public void drawMutation(Punkt[] mutation, Color color1,Color color2,Color color3){
+    public void drawMutation(Point[] mutation, Color color1, Color color2, Color color3){
         for (int i = 0; i < mutation.length; i++) {
             g2d.setColor(color1);
             if (mutation[i].justAdded) g2d.setColor(color2);

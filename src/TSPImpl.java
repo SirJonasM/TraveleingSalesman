@@ -7,7 +7,7 @@ public class TSPImpl implements TSP{
     private final int CHILD_NUMBER;
     private final boolean VOROPTIMIERUNG;
     private final int STARTPOP;
-    public final Punkt[] data;
+    public final Point[] data;
     public int gen = 0;
     public int currentCounter;
     public Random random = new Random();
@@ -17,7 +17,7 @@ public class TSPImpl implements TSP{
     public Permutation[] permutations;
     public int counterTillNextPoint = 50_000;
 
-    public TSPImpl(Punkt[] data, int startingPoints, int STARTPOP, int ANZAHL_SAVINGS, int CHILD_NUMBER, boolean VOROPTIMIERUNG){
+    public TSPImpl(Point[] data, int startingPoints, int STARTPOP, int ANZAHL_SAVINGS, int CHILD_NUMBER, boolean VOROPTIMIERUNG){
         this.data = data;
         this.STARTPOP = STARTPOP;
         this.ANZAHL_SAVINGS =ANZAHL_SAVINGS;
@@ -29,7 +29,7 @@ public class TSPImpl implements TSP{
         currentCounter = counterTillNextPoint;
     }
     public void start(){
-        Punkt[] startData = new Punkt[nextPoint];
+        Point[] startData = new Point[nextPoint];
         System.arraycopy(data,0,startData,0,nextPoint);
         permutations = fillStartPermutations(startData);
         chooseMutations();
@@ -37,7 +37,8 @@ public class TSPImpl implements TSP{
         best2 = permutations[1].getCopy();
         best3 = permutations[2].getCopy();
     }
-    public boolean evolution() {
+
+    public boolean evolute() {
         mutate();
         chooseMutations();
         gen++;
@@ -64,23 +65,23 @@ public class TSPImpl implements TSP{
     }
 
 
-     public  Permutation[] fillStartPermutations(Punkt[] mutation) {
+     public  Permutation[] fillStartPermutations(Point[] mutation) {
         Permutation[] neu = new Permutation[STARTPOP];
         for(int n = 0; n<STARTPOP;n++) {
             if(VOROPTIMIERUNG) {
-                ArrayList<Punkt> mut1 = new ArrayList<>(List.of(mutation));
-                ArrayList<Punkt> mut2 = new ArrayList<>();
+                ArrayList<Point> mut1 = new ArrayList<>(List.of(mutation));
+                ArrayList<Point> mut2 = new ArrayList<>();
                 int r = random.nextInt(mut1.size());
                 mut2.add(mut1.get(r));
                 mut1.remove(r);
 
                 for (int i = 0; i < mutation.length - 1; i++) {
-                    int id = HilfsFormeln.minAbstand(mut2.get(i), mut1);
+                    int id = HelpMethods.minAbstand(mut2.get(i), mut1);
                     mut2.add(mut1.get(id));
                     mut1.remove(id);
                 }
 
-                Punkt[] mut = mut2.toArray(new Punkt[0]);
+                Point[] mut = mut2.toArray(new Point[0]);
                 neu[n] = new Permutation(mut);
             }
             else{
@@ -127,29 +128,23 @@ public class TSPImpl implements TSP{
         }
         permutations = neu;
     }
-    @Override
     public int getCurrentPoints() {
         return nextPoint;
     }
 
-    @Override
     public int getMaxPoints() {
         return data.length;
     }
 
-    @Override
     public int getCurrentCounter() {
         return currentCounter;
     }
 
-    @Override
     public int getGeneration() {
         return gen;
     }
 
-    @Override
     public void addPoint() {
-
         data[nextPoint].justAdded = true;
         if(data[nextPoint-1].justAdded)data[nextPoint-1].justAdded = false;
         for(Permutation permutation : permutations){
@@ -159,6 +154,10 @@ public class TSPImpl implements TSP{
         best2 = permutations[1].getCopy();
         best3 = permutations[2].getCopy();
         nextPoint++;
+    }
+    @Override
+    public String toString(){
+        return gen + ": " +best.toString();
     }
 
 }
