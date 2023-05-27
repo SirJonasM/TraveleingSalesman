@@ -55,7 +55,6 @@ public class TSPImpl implements TSP{
         return false;
     }
 
-
      public  Permutation[] fillStartPermutations(Point[] mutation) {
         Permutation[] neu = new Permutation[STARTPOP];
         for(int n = 0; n<STARTPOP;n++) {
@@ -83,17 +82,17 @@ public class TSPImpl implements TSP{
     }
 
     private void crossover(){
-        Permutation [] neu = new Permutation[ANZAHL_SAVINGS*2];
+        Permutation [] newPermutations = new Permutation[ANZAHL_SAVINGS*2];
 
-        for(int i = 0;i < neu.length; i++){
+        for(int i = 0;i < newPermutations.length; i++){
             int parent1 = random.nextInt(permutations.length);
             int parent2 = random.nextInt(permutations.length);
             while(parent1 == parent2)
                 parent2 = random.nextInt(permutations.length);
-            neu[i] = permutations[parent1].crossOver(permutations[parent2]);
+            newPermutations[i] = permutations[parent1].crossover(permutations[parent2]);
 
         }
-        permutations = neu;
+        permutations = newPermutations;
     }
     void chooseMutations() {
         Arrays.sort(permutations);

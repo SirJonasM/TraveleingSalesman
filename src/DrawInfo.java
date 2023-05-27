@@ -9,16 +9,16 @@ public class DrawInfo extends JLabel {
     }
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Permutation[] best = tsp.getBest();
+        Permutation[] bestPermutations = tsp.getBest();
         g.setFont(new java.awt.Font("Source Code Pro", Font.PLAIN, 18));
         g.setColor(new Color(200,200,200));
         String outputGeneration = "Gen: " + Main.tsp.getGeneration();
-        String ooutputBest1 = "Fitness: " +  best[0].getFitness();
-        String outputBest2 = "Fitness: " +  best[1].getFitness();
-        String outputBest3 = "Fitness: " +  best[2].getFitness();
+        String outputBest1 = "Fitness: " +  bestPermutations[0].getFitness();
+        String outputBest2 = "Fitness: " +  bestPermutations[1].getFitness();
+        String outputBest3 = "Fitness: " +  bestPermutations[2].getFitness();
 
         g.drawString(outputGeneration,10,18);
-        g.drawString(ooutputBest1,10,40);
+        g.drawString(outputBest1,10,40);
         g.drawString(outputBest2,200,40);
         g.drawString(outputBest3,400,40);
 

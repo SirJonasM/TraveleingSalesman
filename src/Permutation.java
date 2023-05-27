@@ -8,14 +8,14 @@ public class Permutation implements Comparable<Permutation> {
 
     public Permutation(Point[] mutation) {
         this.mutation = mutation;
-        this.fitness = berechneFitness();
+        this.fitness = calculateFitness();
     }
     public Permutation(Point[] mutation, double fitness) {
         this.mutation = mutation;
         this.fitness = fitness;
     }
 
-    public double berechneFitness() {
+    public double calculateFitness() {
         count++;
         fitness = 0;
         for (int i = 0; i < mutation.length; i++) {
@@ -29,7 +29,7 @@ public class Permutation implements Comparable<Permutation> {
         System.arraycopy(mutation,0,newMutation,0,mutation.length);
         newMutation[mutation.length] = point;
         mutation = newMutation;
-        berechneFitness();
+        calculateFitness();
     }
     public void makeChanges(int mutationsFaktor) {
         for(int i = 0; i<mutationsFaktor;i++){
@@ -40,7 +40,7 @@ public class Permutation implements Comparable<Permutation> {
                 reverseSequence();
             }
             }
-        berechneFitness();
+        calculateFitness();
     }
 
     private void reverseSequence() {
@@ -63,29 +63,29 @@ public class Permutation implements Comparable<Permutation> {
         mutation[change2] = storage;
     }
 
-    public Permutation crossOver(Permutation permutation2){
+    public Permutation crossover(Permutation permutation){
         Point[] newPermutation = new Point[mutation.length];
         int mid = random.nextInt(mutation.length);
         System.arraycopy(mutation,0,newPermutation,0,mid);
         for(int i = 0;i < mutation.length;i++){
             boolean contains = false;
             for(int j = 0;j<mid;j++){
-                if(newPermutation[j].equals(permutation2.mutation[i])){
+                if(newPermutation[j].equals(permutation.mutation[i])){
                     contains = true;
                     break;
                 }
             }
             if(contains) continue;
-            newPermutation[mid] = permutation2.mutation[i];
+            newPermutation[mid] = permutation.mutation[i];
             mid++;
         }
         return new Permutation(newPermutation);
     }
 
     public Permutation getCopy(){
-        Point[] neu = new Point[mutation.length];
-        System.arraycopy(mutation,0,neu,0,mutation.length);
-        return new Permutation(neu,fitness);
+        Point[] copy = new Point[mutation.length];
+        System.arraycopy(mutation,0,copy,0,mutation.length);
+        return new Permutation(copy,fitness);
     }
 
     @Override

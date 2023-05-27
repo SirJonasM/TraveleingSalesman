@@ -6,25 +6,20 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Main {
-    private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
     public static VisualizationFrame vis;
     public static final String TOURNAME = "usa48";
 
     public static final String TOURPATH = "Datensätze/";
     public static final File TOURFILE = new File(TOURPATH + TOURNAME+ ".tsp");
-    public static final double ZOOM = 8.1;
+    public static final double ZOOM = 1.0;
     public static  Point[] data;
     private static final Random random = new Random();
     static TSP tsp;
 
 
     public static void main(String[] args) throws Exception {
-        long time1 = System.nanoTime();
-        LOGGER.setLevel(Level.WARNING);
-
-
         data = readFile();
-//        data = randomizedData(5000);
+        data = randomizedData(70);
         setDistances(data);
 
         tsp = new TSPImpl(data, TSP.BEGINWITHALLPOINTS, 10,8,6,false);
@@ -32,13 +27,12 @@ public class Main {
         VisualisationThread visualization = new VisualisationThread(tsp);
         visualization.start();
         System.out.println("--------------START-------------");
-        while (vis != null){
+        while (visualization.isRunning){
             //when there is a new best solution tsp.evolute returns true
             if(tsp.evolute()){
-                visualization.updateGraph();
+                visualization.setUpdateGraph(true);
             }
-            visualization.updateInfo();
-            if(tsp.getGeneration() == 300_000) System.out.println((System.nanoTime() - time1)/1_000_000_000.0);
+            visualization.setUpdateInfo(true);
         }
     }
     public static void setDistances(Point[] data){

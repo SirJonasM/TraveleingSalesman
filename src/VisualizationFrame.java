@@ -9,7 +9,7 @@ public class VisualizationFrame extends JFrame {
         frame = new JFrame("TSP");
         frame.setSize(1000,850);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setResizable(false);
+        frame.setResizable(true);
         frame.setLocationRelativeTo(null);
         frame.setLayout(null);
         frame.requestFocus();
