@@ -5,7 +5,7 @@ public class Visualization extends JFrame{
     JFrame frame;
     JLabel drawGraph;
     JLabel drawInfo;
-    public Visualization(){
+    public Visualization(TSP tsp){
         frame = new JFrame("TSP");
         frame.setSize(1000,850);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -13,13 +13,13 @@ public class Visualization extends JFrame{
         frame.setLocationRelativeTo(null);
         frame.setLayout(null);
         frame.requestFocus();
-        drawGraph = new DrawGraph();
+        drawGraph = new DrawGraph(tsp);
         drawGraph.setBounds(0,0,1000,650);
         drawGraph.setVisible(true);
         drawGraph.setOpaque(true);
         drawGraph.setBackground(Color.BLACK);
         frame.add(drawGraph);
-        drawInfo = new DrawInfo();
+        drawInfo = new DrawInfo(tsp);
         drawInfo.setBounds(0,650,1000,100);
 
         drawInfo.setVisible(true);

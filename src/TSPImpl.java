@@ -11,9 +11,8 @@ public class TSPImpl implements TSP{
     public int gen = 0;
     public int currentCounter;
     public Random random = new Random();
-    public static Permutation best;
-    public static Permutation best2;
-    public static Permutation best3;
+    public Permutation[] best = new Permutation[3];
+
     public Permutation[] permutations;
     public int counterTillNextPoint = 50_000;
 
@@ -33,9 +32,9 @@ public class TSPImpl implements TSP{
         System.arraycopy(data,0,startData,0,nextPoint);
         permutations = fillStartPermutations(startData);
         chooseMutations();
-        best = permutations[0].getCopy();
-        best2 = permutations[1].getCopy();
-        best3 = permutations[2].getCopy();
+        best[0] = permutations[0].getCopy();
+        best[1] = permutations[1].getCopy();
+        best[2] = permutations[2].getCopy();
     }
 
     public boolean evolute() {
@@ -48,17 +47,9 @@ public class TSPImpl implements TSP{
             addPoint();
         }
 
-        if(permutations[0].compareTo(best)<0) {
-            best3 = best2.getCopy();
-            best2 = best.getCopy();
-            best = permutations[0].getCopy();
-            return true;
-        } else if (permutations[1].compareTo(best2)<0) {
-            best3 = best2.getCopy();
-            best2 = permutations[1].getCopy();
-            return true;
-        } else if (permutations[2].compareTo(best3)<0) {
-            best3 = permutations[1].getCopy();
+        if(permutations[0].fitness<best[2].fitness){
+            best[2] = permutations[0].getCopy();
+            Arrays.sort(best);
             return true;
         }
         return false;
@@ -144,20 +135,26 @@ public class TSPImpl implements TSP{
         return gen;
     }
 
+    @Override
     public void addPoint() {
         data[nextPoint].justAdded = true;
         if(data[nextPoint-1].justAdded)data[nextPoint-1].justAdded = false;
         for(Permutation permutation : permutations){
             permutation.addPoint(data[nextPoint]);
         }
-        best = permutations[0].getCopy();
-        best2 = permutations[1].getCopy();
-        best3 = permutations[2].getCopy();
+        System.arraycopy(permutations,0,best,0,3);
         nextPoint++;
     }
+
+    @Override
+    public Permutation[] getBest() {
+        return best;
+    }
+
+
     @Override
     public String toString(){
-        return gen + ": " +best.toString();
+        return gen + ": " + Arrays.toString(best);
     }
 
 }

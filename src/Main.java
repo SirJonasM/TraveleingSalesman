@@ -2,10 +2,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.function.Supplier;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Main {
+    private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
     public static Visualization vis;
     public static final String TOURNAME = "usa48";
 
@@ -18,6 +19,7 @@ public class Main {
 
 
     public static void main(String[] args) throws Exception {
+        LOGGER.setLevel(Level.WARNING);
 
         data = readFile();
 //        data = randomizedData(5000);
@@ -25,14 +27,15 @@ public class Main {
 
         tsp = new TSPImpl(data, TSP.BEGINWITHALLPOINTS, 10,8,6,false);
         tsp.start();
-        Thread visualization = new Thread(() -> vis = new Visualization());
+        Thread visualization = new Thread(() -> vis = new Visualization(tsp));
         visualization.start();
         visualization.join();
         System.out.println("--------------START-------------");
         while (vis != null){
+            //when there is a new best solution tsp.evolute returns true
             if(tsp.evolute()){
                 vis.drawGraph.updateUI();
-                System.out.println(tsp);
+                LOGGER.info(tsp.toString());
             }
             vis.drawInfo.updateUI();
         }
@@ -44,6 +47,7 @@ public class Main {
             }
         }
     }
+
 
     public static Point[] readFile() throws FileNotFoundException {
         Scanner scanner = new Scanner(TOURFILE);
@@ -83,4 +87,5 @@ public class Main {
         }
         return data;
     }
+
 }

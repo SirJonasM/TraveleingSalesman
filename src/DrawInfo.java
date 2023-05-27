@@ -2,19 +2,25 @@ import javax.swing.*;
 import java.awt.*;
 
 public class DrawInfo extends JLabel {
+    public TSP tsp;
+    public DrawInfo(TSP tsp){
+        super();
+        this.tsp = tsp;
+    }
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        Permutation[] best = tsp.getBest();
         g.setFont(new java.awt.Font("Source Code Pro", Font.PLAIN, 18));
         g.setColor(new Color(200,200,200));
-        String out1 = "Gen: " + Main.tsp.getGeneration();
-        String out2 = "Fitness: " +  Math.round(TSPImpl.best.fitness*100.0)/100.0;
-        String outfit2 = "Fitness: " +  Math.round(TSPImpl.best2.fitness*100.0)/100.0;
-        String outfit3 = "Fitness: " +  Math.round(TSPImpl.best3.fitness*100.0)/100.0;
+        String outputGeneration = "Gen: " + Main.tsp.getGeneration();
+        String ooutputBest1 = "Fitness: " +  best[0].getFitness();
+        String outputBest2 = "Fitness: " +  best[1].getFitness();
+        String outputBest3 = "Fitness: " +  best[2].getFitness();
 
-        g.drawString(out1,10,18);
-        g.drawString(out2,10,40);
-        g.drawString(outfit2,200,40);
-        g.drawString(outfit2,400,40);
+        g.drawString(outputGeneration,10,18);
+        g.drawString(ooutputBest1,10,40);
+        g.drawString(outputBest2,200,40);
+        g.drawString(outputBest3,400,40);
 
 
         if(Main.tsp.getCurrentPoints() != Main.tsp.getMaxPoints()){

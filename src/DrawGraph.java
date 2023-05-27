@@ -9,15 +9,21 @@ public class DrawGraph extends JLabel {
     Color mid = new Color(200,200,200);
     Color bottom = new Color(80,80,80);
     Color red = new Color(255,0,0);
+    private final TSP tsp;
+
+    public DrawGraph(TSP tsp){
+        super();
+        this.tsp = tsp;
+    }
 
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        drawMutation(TSPImpl.best3.mutation,bottom,bottom,bottom);
-        drawMutation(TSPImpl.best2.mutation, mid,mid,mid);
-        drawMutation(TSPImpl.best.mutation,top,red,green);
+        Permutation[] best = tsp.getBest();
+        drawMutation(best[0].mutation,bottom,bottom,bottom);
+        drawMutation(best[1].mutation, mid,mid,mid);
+        drawMutation(best[2].mutation,top,red,green);
 
         if(Main.tsp.getCurrentPoints() == Main.data.length) return;
         int x1 = (int) (Main.data[Main.tsp.getCurrentPoints()].x/Main.ZOOM) ;
