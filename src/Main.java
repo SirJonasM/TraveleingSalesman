@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 
 public class Main {
     private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
-    public static Visualization vis;
+    public static VisualizationFrame vis;
     public static final String TOURNAME = "usa48";
 
     public static final String TOURPATH = "Datensätze/";
@@ -19,7 +19,9 @@ public class Main {
 
 
     public static void main(String[] args) throws Exception {
+        long time1 = System.nanoTime();
         LOGGER.setLevel(Level.WARNING);
+
 
         data = readFile();
 //        data = randomizedData(5000);
@@ -27,17 +29,16 @@ public class Main {
 
         tsp = new TSPImpl(data, TSP.BEGINWITHALLPOINTS, 10,8,6,false);
         tsp.start();
-        Thread visualization = new Thread(() -> vis = new Visualization(tsp));
+        VisualisationThread visualization = new VisualisationThread(tsp);
         visualization.start();
-        visualization.join();
         System.out.println("--------------START-------------");
         while (vis != null){
             //when there is a new best solution tsp.evolute returns true
             if(tsp.evolute()){
-                vis.drawGraph.updateUI();
-                LOGGER.info(tsp.toString());
+                visualization.updateGraph();
             }
-            vis.drawInfo.updateUI();
+            visualization.updateInfo();
+            if(tsp.getGeneration() == 300_000) System.out.println((System.nanoTime() - time1)/1_000_000_000.0);
         }
     }
     public static void setDistances(Point[] data){

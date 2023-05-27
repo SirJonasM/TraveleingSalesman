@@ -1,11 +1,11 @@
 import javax.swing.*;
 import java.awt.*;
 
-public class Visualization extends JFrame{
+public class VisualizationFrame extends JFrame {
     JFrame frame;
     JLabel drawGraph;
     JLabel drawInfo;
-    public Visualization(TSP tsp){
+    public VisualizationFrame(TSP tsp) {
         frame = new JFrame("TSP");
         frame.setSize(1000,850);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

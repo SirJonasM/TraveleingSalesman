@@ -1,8 +1,6 @@
 import java.util.*;
-import java.util.logging.Logger;
 
 public class Permutation implements Comparable<Permutation> {
-    private final Logger LOGGER = Logger.getLogger(Permutation.class.getName());
     public static int count = 0;
     private static final Random random = new Random();
     Point[] mutation;
@@ -19,10 +17,6 @@ public class Permutation implements Comparable<Permutation> {
 
     public double berechneFitness() {
         count++;
-        if(count == Integer.MAX_VALUE) LOGGER.warning("Max berechnungen!");
-        if(count == 2_000_000_000) LOGGER.warning("2 Milliarden berechnungen!");
-        if(count == 1_000_000_000) LOGGER.warning("1 Milliarden berechnungen!");
-
         fitness = 0;
         for (int i = 0; i < mutation.length; i++) {
             fitness += mutation[i].distances.get(mutation[(i + 1) % mutation.length].id);
