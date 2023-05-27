@@ -2,39 +2,37 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.function.Supplier;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Main {
-    public static Visualization vis;
+    public static VisualizationFrame vis;
     public static final String TOURNAME = "usa48";
 
     public static final String TOURPATH = "Datensätze/";
     public static final File TOURFILE = new File(TOURPATH + TOURNAME+ ".tsp");
-    public static final double ZOOM = 8.1;
+    public static final double ZOOM = 1.0;
     public static  Point[] data;
     private static final Random random = new Random();
     static TSP tsp;
 
 
     public static void main(String[] args) throws Exception {
-
         data = readFile();
-//        data = randomizedData(5000);
+        data = randomizedData(70);
         setDistances(data);
 
         tsp = new TSPImpl(data, TSP.BEGINWITHALLPOINTS, 10,8,6,false);
         tsp.start();
-        Thread visualization = new Thread(() -> vis = new Visualization());
+        VisualisationThread visualization = new VisualisationThread(tsp);
         visualization.start();
-        visualization.join();
         System.out.println("--------------START-------------");
-        while (vis != null){
+        while (visualization.isRunning){
+            //when there is a new best solution tsp.evolute returns true
             if(tsp.evolute()){
-                vis.drawGraph.updateUI();
-                System.out.println(tsp);
+                visualization.setUpdateGraph(true);
             }
-            vis.drawInfo.updateUI();
+            visualization.setUpdateInfo(true);
         }
     }
     public static void setDistances(Point[] data){
@@ -44,6 +42,7 @@ public class Main {
             }
         }
     }
+
 
     public static Point[] readFile() throws FileNotFoundException {
         Scanner scanner = new Scanner(TOURFILE);
@@ -83,4 +82,5 @@ public class Main {
         }
         return data;
     }
+
 }

@@ -9,5 +9,7 @@ public interface TSP {
     int getCurrentCounter();
     int getGeneration();
     void addPoint();
+    Permutation[] getBest();
+
 
 }
